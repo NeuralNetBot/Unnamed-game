@@ -2,7 +2,7 @@
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 #include "GameWindow.h"
-#include "Model.h"
+#include "StaticModel.h"
 #include "Camera.h"
 #include <vector>
 
@@ -12,46 +12,67 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1366;
+const unsigned int SCR_HEIGHT = 768;
 
-// camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
-// timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+int fps = 0;
 
 
 GameWindow::GameWindow(std::string title, int argc, char** argv)
 {
-	glfwInit();
+	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+	GLenum err = glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title.c_str(), NULL, NULL);
+
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 
 		glfwTerminate();
 	}
+	glfwGetWindowPos(window, 0, 0);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	std::cout << "GLEW_INIT: " << glewInit() << std::endl;
 
+	glewExperimental = GL_TRUE;
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
-	Shader shader("C:/Users/conso/source/repos/FPSgame/x64/Debug/Shaders/lighting.vs", "C:/Users/conso/source/repos/FPSgame/x64/Debug/Shaders/lighting.fs");
-	Model loadedmodel("C:/Users/conso/source/repos/FPSgame/x64/Debug/nanosuit.obj");
-	
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+	Shader shader("Shaders/lighting.vs", "Shaders/lighting.fs");
+	std::cout << "hit" << std::endl;
+	StaticModel loadedmodel("nanosuit/stuff.obj");
+	std::cout << "hit" << std::endl;
+	//Model nanosuit("nanosuit/nanosuit.obj");
+	const GLubyte* vender = glGetString(GL_VENDOR);
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* version = glGetString(GL_VERSION);
+	const GLubyte* extensions = glGetString(GL_EXTENSIONS);
+	std::cout << vender << std::endl;
+	std::cout << renderer << std::endl;
+	std::cout << version << std::endl;
+	std::cout << extensions << std::endl;
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
@@ -60,22 +81,27 @@ GameWindow::GameWindow(std::string title, int argc, char** argv)
 
 		processInput(window);
 
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClearColor(0.3f, 0.3f, 0.5f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	 	shader.use();
 
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 10000.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMat4("projection", projection);
 		shader.setMat4("view", view);
-
 		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+		model = glm::translate(model, glm::vec3(0.0f, -35.75f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 		shader.setMat4("model", model);
 		loadedmodel.Draw(shader);
-
+/*
+		glm::mat4 nanomodel;
+		nanomodel = glm::translate(nanomodel, glm::vec3(0.0f, -1.75f, 0.0f));
+		nanomodel = glm::scale(nanomodel, glm::vec3(0.2f, 0.2f, 0.2f));
+		shader.setMat4("model", nanomodel);
+		nanosuit.Draw(shader);
+*/	
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

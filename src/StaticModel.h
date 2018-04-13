@@ -3,7 +3,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Mesh.h"
+#include "StaticMesh.h"
 #include "Shader.h"
 
 #include <string>
@@ -12,19 +12,19 @@
 #include <iostream>
 #include <map>
 #include <vector>
-
-class Model
+#include "soil.h"
+class StaticModel
 {
 public:
 	vector<Texture> textures_loaded;
-	vector<Mesh> meshes;
+	vector<StaticMesh> meshes;
 	string directory;
 	bool gammaCorrection;
-	Model()
+	StaticModel()
 	{
 
 	}
-	Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
+	StaticModel(string const &path, bool gamma = false) : gammaCorrection(gamma)
 	{
 		loadModel(path);
 	}
@@ -46,15 +46,14 @@ private:
 			return;
 		}
 		directory = path.substr(0, path.find_last_of('/'));
-
 		processNode(scene->mRootNode, scene);
 	}
 
 	void processNode(aiNode *node, const aiScene *scene)
 	{
-
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
+			std::cout << i << std::endl;
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			meshes.push_back(processMesh(mesh, scene));
 		}
@@ -66,7 +65,7 @@ private:
 
 	}
 
-	Mesh processMesh(aiMesh *mesh, const aiScene *scene);
+	StaticMesh processMesh(aiMesh *mesh, const aiScene *scene);
 
 	vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName);
 };

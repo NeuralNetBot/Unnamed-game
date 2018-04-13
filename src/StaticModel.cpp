@@ -1,8 +1,9 @@
-#include "Model.h"
+#include <GL\glew.h>
+#include "StaticModel.h"
 
-Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
+unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false);
+StaticMesh StaticModel::processMesh(aiMesh *mesh, const aiScene *scene)
 {
-
 	vector<Vertex> vertices;
 	vector<unsigned int> indices;
 	vector<Texture> textures;
@@ -67,11 +68,10 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
 	std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-
-	return Mesh(vertices, indices, textures);
+	return StaticMesh(vertices, indices, textures);
 }
 
-vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
+vector<Texture> StaticModel::loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName)
 {
 	vector<Texture> textures;
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -91,7 +91,7 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
 		if (!skip)
 		{
 			Texture texture;
-			texture.textureID = texture.Load(str.C_Str());
+			texture.id = TextureFromFile(str.C_Str(), this->directory);
 			texture.type = typeName;
 			texture.path = str.C_Str();
 			textures.push_back(texture);
@@ -99,4 +99,35 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
 		}
 	}
 	return textures;
+}
+unsigned int TextureFromFile(const char *path, const string &directory, bool gamma)
+{
+	string filename = string(path);
+	filename = directory + '/' + filename;
+
+	unsigned int texID = 0;
+	int width;
+	int height;
+	unsigned char *data;
+
+	texID = SOIL_load_OGL_texture
+	(
+		filename.c_str(),
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
+	std::cout << texID << std::endl;
+	if (texID == 0)
+	{
+		std::cout << "SOIL loading error: " <<  SOIL_last_result() <<" FileName: "<<filename.c_str()<< std::endl;
+		return 0;
+	}
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	return texID;
 }

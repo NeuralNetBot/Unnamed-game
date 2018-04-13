@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <Windows.h>
 #include "Shader.h"
 #include <GL/GL.h>
@@ -6,7 +6,6 @@
 #include <glm\glm.hpp>
 #include <string>
 #include <vector>
-#include "Texture.h"
 using namespace std;
 
 struct Vertex {
@@ -17,19 +16,24 @@ struct Vertex {
 	glm::vec3 Bitangent;
 };
 
-class Mesh {
+struct Texture {
+	unsigned int id;
+	string type;
+	string path;
+};
+
+class StaticMesh {
 public:
 	vector<Vertex> vertices;
 	vector<unsigned int> indices;
 	vector<Texture> textures;
 	unsigned int VAO;
 	
-	Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+	StaticMesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
 	{
 		this->vertices = vertices;
 		this->indices = indices;
 		this->textures = textures;
-
 		setupMesh();
 	}
 

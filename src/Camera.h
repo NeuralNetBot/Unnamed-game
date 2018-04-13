@@ -1,8 +1,8 @@
 #pragma once
-#include "Entity.h"
 #include <GL\glut.h>
 #include <glm\glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
 enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
@@ -12,10 +12,9 @@ enum Camera_Movement {
 
 const GLfloat YAW = -90.0f;
 const GLfloat PITCH = 0.0f;
-const GLfloat SPEED = 3.0f;
+const GLfloat SPEED = 10.0f;
 const GLfloat SENSITIVTY = 0.05f;
 const GLfloat ZOOM = 45.0f;
-
 
 
 class Camera
@@ -34,16 +33,7 @@ public:
 	GLfloat MovementSpeed;
 	GLfloat MouseSensitivity;
 	GLfloat Zoom;
-	Camera(Entity entity) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
-	{
-		this->Position = entity.GetPosition().Position;
-		this->WorldUp.x = 0;
-		this->WorldUp.y = 1;
-		this->WorldUp.z = 0;
-		this->Yaw = entity.GetPosition().Rotation.x;
-		this->Pitch = entity.GetPosition().Rotation.y;
-		this->updateCameraVectors();
-	}
+
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
 	{
 		this->Position = position;

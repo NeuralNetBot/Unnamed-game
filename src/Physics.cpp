@@ -3,39 +3,39 @@
 Physics::Physics()
 {
 
-	broadphase = new btDbvtBroadphase();
+	//broadphase = new btDbvtBroadphase();
 
-	collisionConfiguration = new btDefaultCollisionConfiguration();
-	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	//collisionConfiguration = new btDefaultCollisionConfiguration();
+	//dispatcher = new btCollisionDispatcher(collisionConfiguration);
 
-	solver = new btSequentialImpulseConstraintSolver;
+	//solver = new btSequentialImpulseConstraintSolver;
 
-	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-	dynamicsWorld->setGravity(btVector3(0, DEFAULT_GRAVITY, 0));
-
+	//dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+	//dynamicsWorld->setGravity(btVector3(0, DEFAULT_GRAVITY, 0));
 }
 
-void Physics::AddObject(btCollisionShape* shape)
-{
+//void Physics::AddObject(btCollisionShape* shape)
+//{
 
-}
+//}
 
-void Physics::SetGravity(btVector3 Gravity)
-{
-	gravity = Gravity;
-	dynamicsWorld->setGravity(Gravity);
-}
-btVector3 Physics::GetGravity()
-{
-	return gravity;
-}
+//void Physics::SetGravity(btVector3 Gravity)
+//{
+//	gravity = Gravity;
+//	dynamicsWorld->setGravity(Gravity);
+//}
 
-Physics::~Physics()
-{
-	delete dynamicsWorld;
-	delete solver;
-	delete collisionConfiguration;
-	delete dispatcher;
-	delete broadphase;
+//btVector3 Physics::GetGravity()
+//{
+//	return gravity;
+//}
 
-}
+//Physics::~Physics()
+//{
+//	delete dynamicsWorld;
+//	delete solver;
+//	delete collisionConfiguration;
+//	delete dispatcher;
+//	delete broadphase;
+
+//}

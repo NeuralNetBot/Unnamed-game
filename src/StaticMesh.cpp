@@ -1,7 +1,7 @@
 #include <GL\glew.h>
-#include "Mesh.h"
+#include "StaticMesh.h"
 
-void Mesh::Draw(Shader shader)
+void StaticMesh::Draw(Shader shader)
 {
 	unsigned int diffuseNr = 1;
 	unsigned int specularNr = 1;
@@ -24,7 +24,7 @@ void Mesh::Draw(Shader shader)
 
 		glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
 
-		textures[i].Bind();
+		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
 
 	glBindVertexArray(VAO);
@@ -34,7 +34,7 @@ void Mesh::Draw(Shader shader)
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void Mesh::setupMesh()
+void StaticMesh::setupMesh()
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
