@@ -1,7 +1,5 @@
 #pragma once
-#include <GL\glut.h>
-#include <glm\glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include"Includes.h"
 
 enum Camera_Movement {
 	FORWARD,
@@ -14,13 +12,11 @@ const GLfloat YAW = -90.0f;
 const GLfloat PITCH = 0.0f;
 const GLfloat SPEED = 10.0f;
 const GLfloat SENSITIVTY = 0.05f;
-const GLfloat ZOOM = 45.0f;
-
+const GLfloat ZOOM = 90.0f;
 
 class Camera
 {
 public:
-	bool bound_to_entity = false;
 	glm::vec3 Position;
 	glm::vec3 Front;
 	glm::vec3 Up;
@@ -74,4 +70,3 @@ private:
 		this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 	}
 };
-

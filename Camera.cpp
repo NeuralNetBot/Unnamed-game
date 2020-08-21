@@ -1,4 +1,5 @@
 #include "Camera.h"
+
 glm::mat4 Camera::GetViewMatrix()
 {
 	return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
